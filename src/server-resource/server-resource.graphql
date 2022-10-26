@@ -1,0 +1,93 @@
+scalar Date
+type ResourceInfo {
+    id: Int,
+    instance: String,
+    instanceAlias: String,
+    region: String,
+    province: String,
+    authorizedDatabase: Int,
+    describe: String,
+    createTime: Date,
+    updateTime: Date,
+   sqlinfo:[SqlInfo],
+}
+
+type SqlInfo {
+  id:Int
+  resources_info_id:Int
+  show_count:Int
+  identify_permissions:Int
+  db_type:String
+  port:Int
+  user:String 
+  database:String
+  password:String
+  describe:String
+  create_time:String
+  update_time:String
+}
+
+type ResourceInfoResult{
+    data:[ResourceInfo]
+    total: Int
+}
+
+type DeleteCount{
+    count: Int
+}
+
+type Query{
+    resourceInfo(id:Int):ResourceInfo
+    resourceInfos(
+    id:Int
+    instance:String
+    instanceAlias:String
+    region:String
+    province:String
+    authorizedDatabase:Int
+    describe:String
+    skip: Int
+    take: Int
+    ):ResourceInfoResult
+
+    getAuthorizedDb(resources_info_id: Int): SqlInfoResult
+}
+
+type Mutation {
+    createResourceInfo(createResourceInfoInput:CreateResourceInfoInput):ResourceInfo
+    deleteResourceInfo(id: Int):ResourceInfo
+    updateResourceInfo(
+        id: Int
+        updateResourceInfoInput:UpdateResourceInfoInput
+    ):ResourceInfo
+    deleteResourceInfos(deleteResourceInfosInput: [DeleteResourceInfosInput]):DeleteCount
+    deleteResources(id: [Int]):DeleteCount
+}
+
+input CreateResourceInfoInput {
+    instance: String,
+    instanceAlias: String,
+    region: String,
+    province: String,
+    authorizedDatabase: Int,
+    describe: String
+}
+
+input UpdateResourceInfoInput {
+    instance: String,
+    instanceAlias: String,
+    region:String,
+    province:String,
+    authorizedDatabase: Int,    
+    describe:String
+}
+
+input DeleteResourceInfosInput {
+    id: Int,
+    instance: String,
+    instanceAlias: String,
+    region: String,
+    province: String,
+    authorizedDatabase: Int, 
+    describe: String,
+}

@@ -1,0 +1,158 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model classification {
+  id                         Int      @id @default(autoincrement())
+  parent_id                  Int      @default(0)
+  sort                       Int?
+  depth                      Int
+  classification_template_id Int      @default(0)
+  create_time                DateTime @db.DateTime(0)
+  update_time                DateTime @db.DateTime(0)
+  is_delete                  Boolean  @default(false)
+  title                      String?  @db.VarChar(255)
+}
+
+model classification_template {
+  id          Int      @id @default(autoincrement())
+  type        Int?
+  is_use      Int
+  name        String   @db.VarChar(255)
+  describe    String   @db.VarChar(255)
+  create_time DateTime @db.DateTime(0)
+  update_time DateTime @db.DateTime(0)
+  is_delete   Boolean  @default(false)
+}
+
+model column_info {
+  id                   Int       @id @default(autoincrement())
+  column_id            Int?
+  hit_rule             String?   @db.VarChar(255)
+  column_name          String?   @db.VarChar(255)
+  before_hit_rule      String?   @db.VarChar(255)
+  attribute_type       String?   @db.VarChar(255)
+  classification_name  String?   @db.VarChar(255)
+  revision_status      Int?
+  sensitive_level      String?   @db.VarChar(255)
+  sampling_results     String?   @db.VarChar(255)
+  sensitive_results_id Int?
+  before_hit_level     String?   @db.VarChar(255)
+  create_time          DateTime? @db.DateTime(0)
+  update_time          DateTime? @db.DateTime(0)
+  is_delete            Boolean   @default(false)
+  data_type            String?   @db.VarChar(100)
+}
+
+model db_sensitive_result {
+  id               Int       @id @default(autoincrement())
+  self_db_id       Int?
+  total_tables     Int?
+  sensitive_tables Int?
+  create_time      DateTime? @db.DateTime(0)
+  update_time      DateTime? @db.DateTime(0)
+  is_delete        Boolean   @default(false)
+}
+
+model modelandrules {
+  id                   Int       @id @default(autoincrement())
+  recognition_model_id Int?
+  sensitive_rules_id   Int?
+  create_time          DateTime? @db.DateTime(0)
+  update_time          DateTime? @db.DateTime(0)
+  is_delete            Boolean   @default(false)
+}
+
+model recognition_model {
+  id          Int      @id @default(autoincrement())
+  name        String   @db.VarChar(255)
+  type        Int
+  rule        Json
+  describe    String?  @db.Text
+  create_time DateTime @db.DateTime(0)
+  update_time DateTime @db.DateTime(0)
+  is_delete   Boolean  @default(false)
+}
+
+model resources_info {
+  id                 Int       @id @default(autoincrement()) @db.UnsignedInt
+  instance           String?   @db.VarChar(40)
+  instanceAlias      String?   @db.VarChar(40)
+  region             String?   @db.VarChar(40)
+  province           String?   @db.VarChar(40)
+  authorizedDatabase Int?      @db.UnsignedInt
+  describe           String?   @db.VarChar(200)
+  create_time        DateTime? @db.DateTime(0)
+  update_time        DateTime? @db.DateTime(0)
+  is_delete          Boolean   @default(false)
+}
+
+model self_db {
+  id                   Int       @id @default(autoincrement())
+  resources_info_id    Int
+  show_count           Int
+  identify_permissions Int
+  db_type              String    @db.VarChar(100)
+  port                 Int
+  user                 String    @db.VarChar(100)
+  database             String    @db.VarChar(100)
+  password             String    @db.VarChar(100)
+  describe             String?   @db.VarChar(100)
+  create_time          DateTime  @db.DateTime(0)
+  update_time          DateTime  @db.DateTime(0)
+  scan_time            DateTime? @db.DateTime(0)
+  scan_state           Int       @default(0)
+  is_delete            Boolean   @default(false)
+}
+
+model sensitive_level {
+  id                         Int      @id @default(autoincrement())
+  name                       String   @db.VarChar(255)
+  color                      String?  @db.VarChar(255)
+  count                      Int      @default(0)
+  describe                   String?  @db.VarChar(255)
+  classification_template_id Int
+  create_time                DateTime @db.DateTime(0)
+  type                       Int?
+  update_time                DateTime @db.DateTime(0)
+  is_delete                  Boolean  @default(false)
+
+}
+
+model sensitive_results {
+  id                         Int      @id @default(autoincrement())
+  table_name                 String   @db.VarChar(255)
+  database_id                Int
+  total_row                  Int
+  total_column               Int
+  sensitive_column           Int
+  number_cell                Int
+  create_time                DateTime @db.DateTime(0)
+  update_time                DateTime @db.DateTime(0)
+  is_delete                  Boolean  @default(false)
+  classification_template_id Int?     @default(1)
+  hit_data                   Json?
+}
+
+model sensitive_rules {
+  id                          Int       @id @default(autoincrement())
+  uuid                        String    @db.VarChar(255)
+  name                        String    @db.VarChar(255)
+  sensitive_level_id          Int @unique
+  recognition_model_id        Int?
+  classification_template_id  Int
+  sensitive_classification_id Int
+  status                      Int
+  scan_range                  Json?
+  create_time                 DateTime? @db.DateTime(0)
+  update_time                 DateTime? @db.DateTime(0)
+  is_delete                   Boolean   @default(false)
+  attribute_type              String?   @db.VarChar(255)
+  describe                    String?   @db.VarChar(255)
+
+}

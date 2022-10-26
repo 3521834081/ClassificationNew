@@ -1,0 +1,88 @@
+scalar JSON
+scalar Date
+# 敏感分类字段
+type SensitiveClassification {
+ key:Int
+ parentKey:Int
+sort:Int
+depth:Int
+title:String
+classification_template_id:Int
+}
+
+# 多条敏感分类的查询结果，包括分页指定的数量，以及符合条件的总数
+type SensitiveClassificationResult {
+  data: [SensitiveClassification]
+  total: Int
+}
+type SensitiveClassificationResultNoTotal {
+  data: [SensitiveClassification]
+}
+
+# 删除一条敏感分类的结果
+type DeleteSensitiveClassificationResult {
+  deleteSuccess: Boolean
+}
+# 规则的路径的结果
+type RulePathResult {
+  PathIds: [Int!]!
+  PathNames: String!
+}
+
+# 创建多条记录的返回结果
+type CreatManyPayload {
+  count: Int
+}
+
+type Query {
+  # 按id查询一条敏感分类，返回敏感分类
+  sensitiveClassification: SensitiveClassificationResultNoTotal
+  #根据ruleid得到rule的路径
+  getRulePath(ruleId:Int!):RulePathResult
+
+}
+# 创建敏感分类的输入类型
+input CreateSensitiveClassificationInput{
+  title: String!
+  parentKey: Int!
+}
+type Mutation {
+
+  # 创建一个敏感分类，返回创建后的敏感分类
+    createSensitiveClassification(
+     title: String!
+     parentKey: Int!
+  ): SensitiveClassification
+
+  createSensitiveClassifications(
+    CreateSensitiveClassificationInputs: [CreateSensitiveClassificationInput!]!
+  ): CreatManyPayload
+  
+  # 删除指定id的敏感分类，返回删除后的敏感分类
+  deleteSensitiveClassification(
+    key: Int!
+  ): DeleteSensitiveClassificationResult
+
+  # 更新指定id的敏感分类，返回更新后的敏感分类
+  updateSensitiveClassification(
+    key: Int
+    title:String
+  ): SensitiveClassification
+}
+
+
+
+
+# # 创建多条敏感分类的输入类型
+# input CreateSensitiveClassificationInputs {
+#   sensitiveClassifications: [CreateSensitiveClassificationInput]!
+# }
+
+# 更新敏感分类的输入类型
+input UpdateSensitiveClassificationInput {
+  categoryLevel: Int
+  parentKey: ID
+  title: String
+  key: ID
+  children: JSON
+}

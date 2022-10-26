@@ -1,0 +1,122 @@
+scalar JSON
+scalar Date
+
+type ColumnInfo{
+    id:Int
+    sensitive_results_id:Int
+    column_id:Int
+    column_name: String
+    classification_name: String
+    rule_id:Int
+    hit_rule:String
+    sensitive_level: String
+    attrubute_type: String
+    revision_status: Int
+    sampling_results: String
+    before_hit_rule: String
+    before_hit_level: String
+    create_time: Date
+    update_time: Date
+    is_delete: Boolean
+}
+
+type RevisedRecord{
+    id:Int
+    sensitive_result_id:Int
+    column_id:Int
+    column_name: String
+    classification_name: String
+    rule_id:Int
+    hit_rule:String
+    sensitive_level: String
+    attrubute_type: String
+    revision_status: Int
+    sampling_results: String
+    before_hit_rule: String
+    before_hit_level: String
+    create_time: Date
+    update_time: Date
+    is_delete: Boolean
+    sensitiveResult: SensitiveResult
+    database: SqlInfo
+}
+type RevisedRecordResult{
+    data: [RevisedRecord]
+    total: Int
+}
+
+type ColumnInfoResult{
+  data: [ColumnInfo]
+  total: Int
+}
+type SensitiveResult1{
+    id: Int
+    classification_template_id:Int
+    table_name:String
+    database_id:Int
+    total_row:Int
+    total_column:Int
+    sensitive_column:Int
+    hit_data:JSON
+    number_cell:Int
+    create_time:Date
+    update_time:Date
+    column_info:JSON
+}
+
+type SensitiveResult{
+    id: Int
+    classification_template_id:Int
+    table_name:String
+    database_id:Int
+    total_row:Int
+    total_column:Int
+    sensitive_column:Int
+    hit_data:JSON
+    number_cell:Int
+    create_time:Date
+    update_time:Date
+    is_delete:Boolean
+    column_info:JSON
+    columnInfo: ColumnInfoResult
+    sqlInfoResult:SqlInfoResult
+}
+
+type SensitiveResultModel{
+    data:[SensitiveResult]
+    total:Int
+}
+
+type Query{
+    sensitiveResult(
+    tableName:String
+    region: String
+    instance: String
+    hitData:JSON
+    starttime:Date 
+    endtime:Date
+    skip:Int
+    take:Int
+    ):SensitiveResultModel
+    columnInfo(
+    sensitive_result_id:Int
+    skip:Int
+    take:Int):ColumnInfoResult
+    revisedRecord(
+        resource:Int
+        database:String
+        hit_rule:String
+        sensitive_level:String
+        skip:Int
+        take:Int
+    ): RevisedRecordResult
+}
+type Mutation{
+    RevisionHitRules(
+        sensitive_result_id:Int
+        column_id: Int
+        hit_rule: String
+        sensitive_level: String
+    ): ColumnInfo
+    RecoveryHitRules(id:Int): ColumnInfo
+}

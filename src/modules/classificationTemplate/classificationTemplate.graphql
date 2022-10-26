@@ -1,0 +1,113 @@
+scalar JSON
+scalar Date
+
+# 分类模板字段
+type ClassificationTemplate {
+  id: Int
+  type: Int
+  is_use: Int
+  name: String
+  describe: String
+  create_time: Date
+  update_time: Date
+  is_delete: Boolean
+}
+# 敏感规则字段带有等级
+type SensitiveRuleWithLevel {
+  id: Int
+  uuid: String
+  name: String
+  sensitiveLevelId: Int
+  recognitionModelId: Int
+  classificationTemplateId: Int
+  sensitiveClassificationId: Int
+  modelInfo: RecognitionModel
+  status: Int
+  scanRange: JSON
+  createTime: Date
+  updateTime: Date
+  isDelete: Boolean
+  attributeType: String
+  describe: String
+  sensitiveLevel:SensitiveLevel
+}
+
+# 多条分类模板的查询结果，包括分页指定的数量，以及符合条件的总数
+type ClassificationTemplatesResult {
+  data: [ClassificationTemplate] # 模板数据数组
+  total: Int # 总数
+}
+type DeleteClassificationTemplateResult {
+ isSuccess:Boolean
+}
+type CopyClassificationTemplateResult {
+ isSuccess:Boolean
+}
+type ClassificationAndRulesResult{
+  classifications:[SensitiveClassification]
+  rules:[SensitiveRuleWithLevel]
+}
+
+type Query {
+  # 按id查询一条分类模板，返回分类模板
+  classificationTemplate(id: Int): ClassificationTemplate
+
+
+  # 按分页查询所有模板，返回分页指定数量及所有模板总数
+  allClassificationTemplates(
+    skip: Int #跳过数量
+    take: Int #获取数量
+  ): ClassificationTemplatesResult # 返回多条分类模板的查询结果
+  # 按分页查询符合条件的模板，返回分页指定数量及符合条件的模板总数
+  classificationTemplates(
+    id: Int
+    type: Int
+    name: String
+    describe: String
+    isUse: Int
+    skip: Int
+    take: Int
+  ): ClassificationTemplatesResult
+    # 输入模版号跟节点号，返回节点数组，规则
+  findClassificationByIds(
+    templateId:Int!
+    classificationId:Int!
+  ):ClassificationAndRulesResult
+  findIsUseClassification:ClassificationTemplate
+}
+
+type Mutation {
+  # 创建一个模板，返回创建后的模板
+  createClassificationTemplate(
+    createClassificationTemplateInput: CreateClassificationTemplateInput
+  ): ClassificationTemplate
+
+  # 删除指定id的模板，返回删除后的模板
+  deleteClassificationTemplate(id: Int): DeleteClassificationTemplateResult
+
+  # 更新指定id的模板，返回更新后的模板
+  updateClassificationTemplate(
+    id: Int
+    updateClassificationTemplateInput: UpdateClassificationTemplateInput
+  ): ClassificationTemplate
+  
+  # 输入要复制的模版，返回是否复制成功
+  copyClassificationTemplate(templateId:Int):CopyClassificationTemplateResult
+
+}
+
+# 创建模板的输入类型
+input CreateClassificationTemplateInput {
+  type: Int!
+  isUse: Int!
+  name: String!
+  describe: String!
+}
+
+# 更新模板的输入类型
+input UpdateClassificationTemplateInput {
+  
+  isUse: Int
+  name: String
+  describe: String
+}

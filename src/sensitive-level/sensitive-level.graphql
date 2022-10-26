@@ -1,0 +1,66 @@
+scalar Date
+type SensitiveLevel {
+  id: Int
+  classification_template_id: Int
+  type: Int
+  name: String
+  color: String
+  count: Int
+  describe: String
+  create_time: Date
+  update_time: Date
+  is_delete: Boolean
+  isUse: Boolean
+}
+
+type Template {
+  type: Int
+  content: Content
+}
+
+type Model {
+  name: String
+  type: Int
+  SensitiveLevelId: Int
+  rule: Rule
+  describe: String
+}
+
+type Content {
+  describe: String
+}
+
+type Rule {
+  type: Int
+  content: String
+}
+
+type SensitiveLevelResult {
+  data: [SensitiveLevel]
+  total: Int
+  onUseName: String
+  onUseId: Int
+  onUseType: Int
+}
+
+type Query {
+  sensitiveLevel(id: Int): SensitiveLevel
+  allSensitiveLevel: [SensitiveLevel]
+  allSensitiveLevelOnUse(skip: Int, take: Int): SensitiveLevelResult
+}
+
+type Mutation {
+  createSensitiveLevel(
+    createSensitiveLevelInput: CreateSensitiveLevelInput
+  ): SensitiveLevel
+  deleteSensitiveLevel(id: Int): SensitiveLevel
+  updateSensitiveLevel(id: Int, describe: String): SensitiveLevel
+}
+
+input CreateSensitiveLevelInput {
+  name: String
+  color: String
+  describe: String
+  classification_template_id: Int
+  type: Int
+}

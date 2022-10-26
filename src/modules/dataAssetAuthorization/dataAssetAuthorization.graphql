@@ -1,0 +1,136 @@
+scalar JSONdefinitions
+
+scalar JSON
+
+scalar Date
+
+# 数据库信息表
+type SqlInfo {
+  id: Int
+  resources_info_id: Int
+  show_count: Int
+  identify_permissions: Int
+  db_type: String
+  port: Int
+  user: String
+  database: String
+  password: String
+  describe: String
+  create_time: String
+  update_time: String
+  scan_time: Date
+  resourceInfo: ResourceInfo!
+  mysqlIsTure: Boolean
+}
+
+type SqlInfoNoDb {
+  id: Int
+  resources_info_id: Int
+  show_count: Int
+  identify_permissions: Int
+  db_type: String
+  port: Int
+  user: String
+  database: String
+  password: String
+  describe: String
+  create_time: String
+  update_time: String
+  scan_time: Date
+  resourceInfo: ResourceInfo!
+}
+
+# 多条数据库信息表查询结果，包括分页指定的数量，以及符合条件的总数
+type SqlInfoResult {
+  data: [SqlInfo]
+  total: Int
+}
+# 多条数据库信息表查询结果，包括分页指定的数量，以及符合条件的总数,不查询数据库是否正确
+type SqlInfoNoDbResult {
+  data: [SqlInfoNoDb]
+  total: Int
+}
+#查询数据库信息的是否正确
+type IsMysqlTureResult {
+  success: Boolean
+  code: Int
+  message: String
+  data: JSON
+}
+#记录批量插入数据的条数
+type CreateManySqlCount {
+  count: Int!
+}
+#记录批量插入数据的条数
+type UpdataManySqlCount {
+  count: Int!
+}
+
+type Query {
+  # 按分页查询符合条件的数据库信息，返回分页指定数量及符合数据库信息表查询结果
+  sqlInfos(
+    id: Int
+    resources_info_id: Int
+    identify_permissions: Int
+    db_type: String
+    region: String
+    skip: Int
+    take: Int
+  ): SqlInfoResult
+
+  # 查询数据库的账号密码数据库名是否正确
+  getMysqlIsTure(
+    resources_info_id: Int
+    port: Int
+    user: String
+    database: String
+    password: String
+  ): IsMysqlTureResult
+
+  getAuthorizedDb(resources_info_id: Int): SqlInfoResult
+
+  # 按分页查询符合条件的数据库信息，返回分页指定数量及符合数据库信息表查询结果,不甄别数据库是否正确
+  sqlInfosNoDb(
+    id: Int
+    resources_info_id: Int
+    identify_permissions: Int
+    db_type: String
+    skip: Int
+    take: Int
+  ): SqlInfoNoDbResult
+}
+
+type Mutation {
+  # 创建一个或多个数据库信息，返回创建的数量
+  createSqlInfos(
+    createSqlInfoInputs: [CreateSqlInfoInputs!]!
+  ): CreateManySqlCount
+
+  # 更新一个或者多个数据库信息,返回更新成功的数量
+  updateSqlInfos(
+    updateSqlInfoInputs: [UpdateSqlInfoInputs!]!
+  ): UpdataManySqlCount
+
+  # 取消授权,即删除单条数据
+  deleteSqlInfo(id: Int!): SqlInfo
+}
+
+#创建数据库信息的输入类型
+input CreateSqlInfoInputs {
+  resources_info_id: Int
+  db_type: String
+  database: String
+  port: Int
+  user: String
+  password: String
+  describe: String
+}
+#更新数据库信息的输入类型
+input UpdateSqlInfoInputs {
+  id: Int!
+  identify_permissions: Int
+  show_count: Int
+  user: String
+  password: String
+  describe: String
+}

@@ -1,0 +1,117 @@
+scalar JSON
+scalar Date
+
+type ModelAndRule {
+  id: Int
+  recognition_model_id: Int
+  sensitive_rules_id: Int
+}
+
+# 敏感规则字段
+type SensitiveRule {
+  id: Int
+  uuid: String
+  name: String
+  sensitiveLevelId: Int
+  recognitionModelId: Int
+  classificationTemplateId: Int
+  sensitiveClassificationId: Int
+  modelInfo: RecognitionModel
+  status: Int
+  scanRange: JSON
+  createTime: Date
+  updateTime: Date
+  isDelete: Boolean
+  attributeType: String
+  describe: String
+}
+
+# 多条敏感规则的查询结果，包括分页指定的数量，以及符合条件的总数
+type SensitiveRuleResult {
+  data: [SensitiveRule]
+  total: Int
+}
+
+type ModelAndRules {
+  data: [ModelAndRule]
+}
+
+type CreatPayload {
+  count: Int
+}
+# 创建多条记录的返回结果
+type CreatManyPayload {
+  count: Int
+}
+
+#记录批量插入数据的条数
+type CreateManyModelAndRulesCount {
+  count: Int
+}
+# 删除一条敏感规则的结果
+type DeleteSensitiveRuleResult {
+  deleteSuccess: Boolean
+}
+type Query {
+  # 按id查询一条敏感规则，返回敏感规则
+  sensitiveRule(id: Int): SensitiveRule
+
+  modelAndRules(sensitive_rules_id: Int): ModelAndRules
+
+  # 按分页查询符合条件的敏感规则，返回分页指定数量及符合条件的敏感规则总数
+  sensitiveRules(
+    id: Int
+    uuid: String
+    name: String
+    sensitiveLevelId: Int
+    recognitionModelId: Int
+    classificationTemplateId: Int
+    sensitiveClassificationId: Int
+    sensitiveClassificationIds: [Int]
+    status: Int
+    scanRange: JSON
+    skip: Int
+    take: Int
+  ): SensitiveRuleResult
+}
+
+type Mutation {
+  # 创建一个敏感规则，返回创建后的敏感规则
+  createSensitiveRule(
+    createSensitiveRuleInput: CreateSensitiveRuleInput
+  ): SensitiveRule
+
+  # 创建多个敏感规则，返回创建的数量
+  createSensitiveRules(
+    createSensitiveRuleInputs: CreateSensitiveRuleInputs
+  ): CreatManyPayload
+
+  # 删除指定id的敏感规则，返回删除后的敏感规则
+  deleteSensitiveRule(id: Int): DeleteSensitiveRuleResult
+
+  # 更新指定id的敏感规则，返回更新后的敏感规则
+  updateSensitiveRule(
+    id: Int
+    createSensitiveRuleInput: CreateSensitiveRuleInput
+  ): SensitiveRule
+}
+
+# 创建敏感规则的输入类型
+input CreateSensitiveRuleInput {
+  uuid: String
+  name: String
+  sensitiveLevelId: Int
+  recognitionModelId: Int
+  classificationTemplateId: Int
+  sensitiveClassificationId: Int
+  status: Int
+  scanRange: JSON
+  recognitionModelIds: [Int]
+  attributeType: String
+  describe: String
+}
+
+# 更新敏感规则的输入类型
+input CreateSensitiveRuleInputs {
+  sensitiveRules: [CreateSensitiveRuleInput]!
+}

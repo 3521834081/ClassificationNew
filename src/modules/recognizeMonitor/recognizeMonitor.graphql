@@ -1,0 +1,48 @@
+scalar JSONdefinitions
+scalar JSON
+
+
+
+
+# 多条数据库信息表查询结果，包括分页指定的数量，以及符合条件的总数
+type SqlInfoResult {
+  
+  data: [SqlInfo]
+  total: Int
+
+}
+# 轮询扫描返回的结果
+type  ScanStatusResult{
+   data: [ScanParameters]    
+    }
+#轮询返回的结果中的内容
+type ScanParameters{
+   id:Int
+   scanStateCode:Int
+   sacnStateMessage :String
+}
+
+type Query {
+  # 按分页查询符合条件的数据库信息，返回分页指定数量及符合数据库信息表查询结果
+  sqlInfosAndScanState(
+    id: Int
+    instance:String
+    region:String
+   startTime:Date
+   endTime:Date
+   resources_info_id:Int
+   identify_permissions:Int
+   db_type:String
+    skip: Int
+    take: Int
+  ): SqlInfoResult
+
+#轮序,只需要当前页面的id传过来
+ getScanState(
+    ids:[Int!]!
+  ): ScanStatusResult
+
+#根据id执行扫描
+scanById(id:Int):Int
+
+}

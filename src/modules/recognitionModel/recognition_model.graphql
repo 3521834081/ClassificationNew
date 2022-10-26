@@ -1,0 +1,68 @@
+scalar JSON
+scalar Date
+
+# 识别模型字段
+type RecognitionModel {
+  id: Int
+  name: String
+  type: Int
+  rule: JSON
+  describe: String
+  create_time: Date
+  update_time: Date
+  is_delete: Boolean
+}
+
+# 多条识别模型的查询结果，包括分页指定的数量，以及符合条件的总数
+type RecognitionModelResult {
+  data: [RecognitionModel]
+  total: Int
+}
+
+type Query {
+  # 按id查询一条识别模型，返回识别模型
+  recognitionModel(id: Int): RecognitionModel
+
+  # 按分页查询符合条件的识别模型，返回分页指定数量及符合条件的识别模型总数
+  recognitionModels(
+    id: Int
+    name: String
+    type: Int
+    rule: JSON
+    describe: String
+    skip: Int
+    take: Int
+  ): RecognitionModelResult
+}
+
+type Mutation {
+  # 创建一个识别模型，返回创建后的识别模型
+  createRecognitionModel(
+    createRecognitionModelInput: CreateRecognitionModelInput
+  ): RecognitionModel
+
+  # 删除指定id的识别模型，返回删除后的识别模型
+  deleteRecognitionModel(id: Int): RecognitionModel
+
+  # 更新指定id的识别模型，返回更新后的识别模型
+  updateRecognitionModel(
+    id: Int
+    updateRecognitionModelInput: UpdateRecognitionModelInput
+  ): RecognitionModel
+}
+
+# 创建识别模型的输入类型
+input CreateRecognitionModelInput {
+  name: String!
+  type: Int!
+  rule: JSON!
+  describe: String
+}
+
+# 更新识别模型的输入类型
+input UpdateRecognitionModelInput {
+  name: String
+  type: Int
+  rule: JSON
+  describe: String
+}

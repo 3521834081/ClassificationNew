@@ -1,0 +1,72 @@
+scalar Date
+
+type DbSensitiveResult{
+    id:Int
+    self_db_id:Int
+    total_tables:Int
+    sensitive_tables:Int
+    create_time:Date
+    update_time:Date
+    sqlInfoResult:SqlInfoResult
+}
+
+type Column{
+    id:Int
+    column_name:String
+    hit_rule:String
+    sensitive_level:String
+    revision_status:Int
+    sampling_results:String
+    before_hit_rule:String
+  }
+
+type DbSensitiveResultModel{
+    data:[DbSensitiveResult]
+    total:Int
+}
+
+type ColumnDetailResult{
+    data:[Column]
+    total:Int
+}
+
+type TableResultModel{
+    data:[SensitiveResult]
+    arr: [Int]
+    total:Int
+}
+
+type Query{
+    dbSensitiveResult(
+      region:String
+      instance:String
+      db_type:String
+      self_db_id:Int
+      starttime:Date
+      endtime:Date
+      skip:Int
+      take:Int
+    ):DbSensitiveResultModel
+    tablesDetail(
+      database_id:Int
+      table_name:String
+      hit_rule:String
+      sensitive_level:String
+      skip:Int
+      take:Int
+    ): TableResultModel
+    columnDetail(
+      database_id:Int
+      table_name:String
+      skip:Int
+      take:Int
+    ):ColumnDetailResult
+}
+type Mutation{
+  updateHitRules(
+    database_id:Int
+    table_name:String
+    column_id:Int
+    hit_rule:String
+  ):Column
+}
