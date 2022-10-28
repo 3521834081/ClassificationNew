@@ -482,7 +482,18 @@ export class ClassificationTemplateService {
       throw new Error('创建分类失败');
     }
   }
-
+  async judgeFlag(
+    input: Prisma.recognition_modelWhereUniqueInput,
+  ): Promise<boolean> {
+    const flag = await this.prisma.classification_template.findUnique({
+      where: input,
+    });
+    if (flag.type === 1) {
+      return false;
+    } else {
+      return true;
+    }
+  }
   async deleteOne(
     input: Prisma.classification_templateWhereUniqueInput,
   ): Promise<boolean> {
@@ -545,21 +556,39 @@ export class ClassificationTemplateService {
         where: { is_use: 1 },
         data: { is_use: 0 },
       });
-    }
-    const updataAfterTemplateCount =
-      await this.prisma.classification_template.update({
-        where: input,
-        data,
-      });
-    // console.log(updataAfterTemplateCount);
-
-    if (updataAfterTemplateCount['count']) {
-      const updataAfterTemplate =
-        await this.prisma.classification_template.findUnique({
+      // 只更新启用属性is_use不更新其他内容
+      const updataAfterTemplateCount =
+        await this.prisma.classification_template.update({
           where: input,
+          data: {
+            is_use: 1,
+          },
         });
-      return updataAfterTemplate;
+      if (updataAfterTemplateCount['count']) {
+        const updataAfterTemplate =
+          await this.prisma.classification_template.findUnique({
+            where: input,
+          });
+        return updataAfterTemplate;
+      } else throw new Error('启用失败');
+    } else if (this.judgeFlag) {
+      const updataAfterTemplateCount =
+        await this.prisma.classification_template.update({
+          where: input,
+          data,
+        });
+      // console.log(updataAfterTemplateCount);
+
+      if (updataAfterTemplateCount['count']) {
+        const updataAfterTemplate =
+          await this.prisma.classification_template.findUnique({
+            where: input,
+          });
+        return updataAfterTemplate;
+      }
+      throw new Error('更新失败');
+    } else {
+      throw new Error('不能更新内置模板数据');
     }
-    throw new Error('更新失败');
   }
 }

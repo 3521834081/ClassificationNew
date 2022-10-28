@@ -210,12 +210,16 @@ export class ClassificationTemplateResolver {
     @Args('id')
     id: number,
   ): Promise<DeleteClassificationTemplateResult> {
-    const isDeleteTemplate = await this.classificationTemplateService.deleteOne(
-      {
-        id,
-      },
-    );
-    return { isSuccess: isDeleteTemplate };
+    const flag = await this.classificationTemplateService.judgeFlag({ id });
+    if (flag) {
+      const isDeleteTemplate =
+        await this.classificationTemplateService.deleteOne({
+          id,
+        });
+      return { isSuccess: isDeleteTemplate };
+    } else {
+      throw new Error('不能删除内置模板');
+    }
   }
   /**
    *  更新模版
@@ -231,7 +235,6 @@ export class ClassificationTemplateResolver {
     data: CreateClassificationTemplateDto,
   ): Promise<ClassificationTemplate> {
     // console.log(id, data);
-
     const createSensitive = await this.classificationTemplateService.updateOne(
       {
         id,

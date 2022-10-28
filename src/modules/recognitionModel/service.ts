@@ -77,6 +77,7 @@ export class RecognitionModelService {
    * @return {*} {Promise<recognitionModel>}
    * @memberof RecognitionModelService
    */
+
   async deleteOne(
     input: Prisma.recognition_modelWhereUniqueInput,
   ): Promise<recognitionModel> {
@@ -85,6 +86,19 @@ export class RecognitionModelService {
     });
   }
 
+  // 在更新或者删除前添加判断是否是内置的模型
+  async judgeFlag(
+    input: Prisma.recognition_modelWhereUniqueInput,
+  ): Promise<boolean> {
+    const flag = await this.prisma.recognition_model.findUnique({
+      where: input,
+    });
+    if (flag.type === 0) {
+      return false;
+    } else {
+      return true;
+    }
+  }
   async deleteModelAndRules(
     recognition_model_id: number,
   ): Promise<modelandrules> {

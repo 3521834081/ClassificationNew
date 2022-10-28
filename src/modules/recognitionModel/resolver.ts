@@ -141,11 +141,16 @@ export class RecognitionModelResolver {
     @Args('id')
     id: number,
   ): Promise<RecognitionModel> {
-    const deleteOneInstance = await this.recognitionModelService.deleteOne({
-      id,
-    });
-    await this.recognitionModelService.deleteModelAndRules(id);
-    return deleteOneInstance;
+    const flag = await this.recognitionModelService.judgeFlag({ id });
+    if (flag) {
+      const deleteOneInstance = await this.recognitionModelService.deleteOne({
+        id,
+      });
+      await this.recognitionModelService.deleteModelAndRules(id);
+      return deleteOneInstance;
+    } else {
+      throw new Error('不能删除内置模型');
+    }
   }
 
   /**
@@ -164,10 +169,15 @@ export class RecognitionModelResolver {
     data: CreateRecognitionModelDto,
   ): Promise<RecognitionModel> {
     // console.log(data);
-    const updateOneOneInstance = await this.recognitionModelService.updateOne(
-      { id },
-      data,
-    );
-    return updateOneOneInstance;
+    const flag = await this.recognitionModelService.judgeFlag({ id });
+    if (flag) {
+      const updateOneOneInstance = await this.recognitionModelService.updateOne(
+        { id },
+        data,
+      );
+      return updateOneOneInstance;
+    } else {
+      throw new Error('不能更新内置模型');
+    }
   }
 }
