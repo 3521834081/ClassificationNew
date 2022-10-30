@@ -79,30 +79,35 @@ export class SensitiveLevelResolver {
     });
     const onUseId = template.data[0].id;
     const type = template.data[0].type;
-    const sensitive_levels =
-      await this.sensitiveService.findSensitiveLevelByOnUse({
-        classification_template_id: onUseId,
-      });
-    const total = sensitive_levels.total;
-    const data = sensitive_levels.data;
-    // 判断敏感等级是否超过10个
-    if (total > 10) {
-      throw new Error('敏感等级最高设置10级');
-    }
-    // console.log(total);
-    // 判断是否创建重复的敏感等级
-    data.map((item) => {
-      if (item.name === args.name) {
-        throw new Error('不能创建相同的级别名称');
+    // 如果是1的话是内置模板
+    if (type === 1) {
+      throw new Error('不能在内置模板下添加级别');
+    } else {
+      const sensitive_levels =
+        await this.sensitiveService.findSensitiveLevelByOnUse({
+          classification_template_id: onUseId,
+        });
+      const total = sensitive_levels.total;
+      const data = sensitive_levels.data;
+      // 判断敏感等级是否超过10个
+      if (total > 10) {
+        throw new Error('敏感等级最高设置10级');
       }
-    });
-    const createSensitive = await this.sensitiveService.createSensitiveLevel({
-      ...args,
-      type: type,
-      create_time: TransferDate.parseISOLocal(),
-      update_time: TransferDate.parseISOLocal(),
-    });
-    return createSensitive;
+      // console.log(total);
+      // 判断是否创建重复的敏感等级
+      data.map((item) => {
+        if (item.name === args.name) {
+          throw new Error('不能创建相同的级别名称');
+        }
+      });
+      const createSensitive = await this.sensitiveService.createSensitiveLevel({
+        ...args,
+        type: type,
+        create_time: TransferDate.parseISOLocal(),
+        update_time: TransferDate.parseISOLocal(),
+      });
+      return createSensitive;
+    }
   }
 
   @Mutation('deleteSensitiveLevel')

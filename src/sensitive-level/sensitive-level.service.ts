@@ -6,7 +6,7 @@ import { SensitiveLevel } from 'src/graphql.schema';
 
 @Injectable()
 export class SensitiveLevelService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   async findSensitiveLevelById(
     sensitive_levelWhereUniqueInput: Prisma.sensitive_levelWhereUniqueInput,
@@ -15,7 +15,19 @@ export class SensitiveLevelService {
       where: sensitive_levelWhereUniqueInput,
     });
   }
-
+  // 在更新或者删除前添加判断是否是内置的模型
+  async judgeFlag(
+    input: Prisma.recognition_modelWhereUniqueInput,
+  ): Promise<boolean> {
+    const flag = await this.prisma.recognition_model.findUnique({
+      where: input,
+    });
+    if (flag.type === 0) {
+      return false;
+    } else {
+      return true;
+    }
+  }
   async findSensitiveLevelByOnUse(
     input: Prisma.sensitive_levelWhereInput,
     pagination?: { skip: number; take: number },
